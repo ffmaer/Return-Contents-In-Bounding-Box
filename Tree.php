@@ -3,8 +3,6 @@
 /* tengchao@nyu.edu */
 
 
-//This code is used in the context of building and fetching data from a tree that stores all the venues across the nation.
-
 
 class Tree
 
