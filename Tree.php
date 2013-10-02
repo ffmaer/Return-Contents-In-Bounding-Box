@@ -97,9 +97,11 @@ start:		13 digit normalized coordinate. This is the starting point.
 end:		13 digit normalized coordinate. This is the ending point.
 ********************************************************************/
 
+	// start and end parameters are not required
 	public function getVenues($start, $end)
 
 	{
+		// make sure $end is always larger than $start
 		if($start > $end)
 
 		{
@@ -110,6 +112,10 @@ end:		13 digit normalized coordinate. This is the ending point.
 			$end = $bucket;
 
 		}
+		// the following code tries to find the first different digit
+		// 12235 vs 12245 --> the first different digit is 3 vs 4
+		// 122~35 vs 122~45 --> the 122 parts are the same
+		// return 3 and 4
 		$startDigits = str_split($start);
 
 		$endDigits = str_split($end);
@@ -141,14 +147,16 @@ end:		13 digit normalized coordinate. This is the ending point.
 			$i++;
 		}
 
-
+		// startDigits --> 35 endDigits --> 45
 		$startDigits = array_splice($startDigits, $counter, 12);
 
 		$endDigits = array_splice($endDigits, $counter , 12);
 
+		
 		$currentNode = $this->root;
 
-		unset($fail);
+		// fail means the path does not exist
+		$fail = 0;
 
 		foreach($sameDigits as $v)
 
@@ -169,33 +177,43 @@ end:		13 digit normalized coordinate. This is the ending point.
 
 
 		}
-		if(!isset($fail))
+		if(0 == $fail)
 
 		{
+
+			// in the case of 122~35 vs 122~45, the diff is 2
 			$diffDigitsLen = 13 - $counter;
 
+			// 4 - 3 = 1, it is guaranteed positive
 			$firstDigitDiff = (int)$endDigits[0]-(int)$startDigits[0];
 
 			$venueSet = array();
 
+
+			// when they are not next to each other
+			// deal with the points in between
 			if($firstDigitDiff > 1)
 
 			{
+				// the digits in between
+				// for example the digits between 3 and 7 are 4,5,6
 				for($k = $startDigits[0] +1; $k <= $endDigits[0] -1; $k++)
 
-				{
+				{ 
 					$middleNode = $currentNode->child[$k];
 
 					if(is_object($middleNode))
 
 					{
+						// recursion
 						$venueSet = array_merge($venueSet, $middleNode->getVenues());
 
 					}
 				}
-
-
 			}
+
+
+			// deal with the right end point
 			if(is_object($currentNode->child[$startDigits[0]]))
 
 			{
@@ -229,6 +247,10 @@ end:		13 digit normalized coordinate. This is the ending point.
 
 				}
 			}
+
+
+
+			// deal with the right end point
 			if(is_object($currentNode->child[$endDigits[0]]))
 
 			{
