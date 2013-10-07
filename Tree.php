@@ -95,7 +95,7 @@ start:		13 digit normalized coordinate. This is the starting point.
 end:		13 digit normalized coordinate. This is the ending point.
 ********************************************************************/
 
-	// start and end parameters are not required
+	//  Tree's getVenues($start, $end) is different from Node's method getVenues()
 	public function getVenues($start, $end)
 
 	{
@@ -254,9 +254,12 @@ end:		13 digit normalized coordinate. This is the ending point.
 			{
 				$rightNode = $currentNode->child[$endDigits[0]];
 
+				//explore the tree from the next level to the bottom level
 				for ($j = 1; $j < $diffDigitsLen - 1; $j++)
 
 				{
+					// since it is dealing with the right end point, 
+					// everything from the middle to the point before the right end point are included
 					for($k = 0; $k <= $endDigits[$j] - 1; $k++)
 
 					{
@@ -267,7 +270,7 @@ end:		13 digit normalized coordinate. This is the ending point.
 
 						}
 					}
-
+					// go down to the next level
 					if(is_object($rightNode->child[$endDigits[$j]]))
 
 					{
@@ -275,6 +278,8 @@ end:		13 digit normalized coordinate. This is the ending point.
 
 					}
 				}
+
+				// the node on the bottom level
 				if(is_object($rightNode))
 
 				{
